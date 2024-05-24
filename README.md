@@ -33,3 +33,18 @@ This folder stores the scripts for monitoring the cluster status with `prometheu
 ## Output submission 
 
 The final submission for the contest on site is backed up in `./LLM_inference`.
+
+## Results
+
+On NVIDIA V100 platform, baseline Bitandbytes and GPTQ quantization are available. By using 4-bit quantization, we can see that the inference speed of GPTQ is better than  Bitsandbytes in the following chart. Furthermore, with the aid of *vllm*, the overall execution time can have dramatical reduction. Meanwhile, with 4 bits quantization, the memory usage of both GPTQ and Bitsandbytes is around 20 GB for AquilaChat2-34B model.
+
+![image](result1.jpg)
+
+When moved to NVIDIA A100 platform, the available quantization tested here are Bitsandbytes, GPTQ, AWQ. While Bitsandbytes doesn't have official support in *vllm*, Only AWQ and GPTQ is selected as candidates to do more comparisons. By comparing the baseline Bitsandbytes output to V100, we can see that when batch size is set to 1, the difference between A100 and V100 is not that significant as expected. It shows strong memory bottleneck and low GPU utilization with standard huggingface `transformers`. When *vllm* is applied, the difference became significant. With 2 A100 and *vllm + GPTQ*, the overall inference time is better than 4 V100. GPTQ still performs the best when only execution time is considered. What's more, by using *Marlin* with *vllm* support, we can have about 1.5x to 2x of speed up, which is really amazing.
+
+![image](result2.jpg)
+![image](result3.jpg)
+
+We also tested the performance between 2 A100 and 2 MI210 here. Since the bitsandbytes doesn't have official support for 4 bit quantization on AMD GPUs, Only GPTQ and AWQ is tested. Unfortunately, *vllm* doesn't have AWQ support on AMD GPUs. With the [AutoAWQ]() package used here, the inference performance is way worse than *vllm + GPTQ* since we have to turn off `fused_layers` when using AWQ with exllama kernels to prevent some internal errors, and the overall execution time is higher than A100 for about 60.7%.
+
+![image](result4.jpg)
