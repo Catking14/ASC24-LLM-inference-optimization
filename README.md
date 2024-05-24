@@ -22,11 +22,11 @@ To run the required task, execute `run_case$(i).sh` directly, where `$(i)` indic
 
 there are some other files which are used during preparation and experiments.
 
-### `preparation-scripts`
+### `./preparation-scripts`
 
 The `preparation-scripts` folder stores the scripts and optimization attempts we used before contest. Since the final task and dataset is given on site, we use `ceval/ceval-exam` dataset for benchmarking and testing.
 
-### `prometheus`
+### `./prometheus`
 
 This folder stores the scripts for monitoring the cluster status with `prometheus`. We use `ipmitool` to monitor CPU power usage and temperature. `nvidia-smi` and *DCGM-Exporter* is used for monitoring GPU power and temperature.
 
@@ -45,6 +45,6 @@ When moved to NVIDIA A100 platform, the available quantization tested here are B
 ![image](result2.jpg)
 ![image](result3.jpg)
 
-We also tested the performance between 2 A100 and 2 MI210 here. Since the bitsandbytes doesn't have official support for 4 bit quantization on AMD GPUs, Only GPTQ and AWQ is tested. Unfortunately, *vllm* doesn't have AWQ support on AMD GPUs. With the [AutoAWQ]() package used here, the inference performance is way worse than *vllm + GPTQ* since we have to turn off `fused_layers` when using AWQ with exllama kernels to prevent some internal errors, and the overall execution time is higher than A100 for about 60.7%.
+We also tested the performance between 2 A100 and 2 MI210 here. Since the bitsandbytes doesn't have official support for 4 bit quantization on AMD GPUs, Only GPTQ and AWQ is tested. Unfortunately, *vllm* doesn't have AWQ support on AMD GPUs. With the [AutoAWQ](https://github.com/casper-hansen/AutoAWQ) package used here, the inference performance is way worse than *vllm + GPTQ* since we have to turn off `fused_layers` when using AWQ with exllama kernels to prevent some internal errors, and the overall execution time is higher than A100 for about 60.7%.
 
 ![image](result4.jpg)
